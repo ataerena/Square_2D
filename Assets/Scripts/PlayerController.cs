@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private float moveInput = 0f;
     private bool jumpReleased = false;
     private float jumpInput = 0f;
+    private bool dashInput = false;
     [SerializeField] float maxJumpInput = .25f;
     void Start()
     {
@@ -27,12 +28,21 @@ public class PlayerController : MonoBehaviour
             jumpReleased = false;
             jumpInput = 0f;
         }
+
+        if (dashInput)
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            player.Dash(horizontal, vertical);
+            dashInput = false;
+        }
     }
 
     private void Update()
     {
         BufferMoveInput();
         BufferJumpInput();
+        BufferDashInput();
     }
 
     private void BufferMoveInput()
@@ -50,10 +60,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && jumpInput <= maxJumpInput)
         {
             jumpInput += Time.deltaTime;
-        } 
-        else if (jumpInput > maxJumpInput)
+        }
+    }
+
+    private void BufferDashInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            jumpReleased = true;
+            dashInput = true;
         }
     }
 }
