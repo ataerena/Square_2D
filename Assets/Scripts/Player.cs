@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] Transform groundCheck;
     [SerializeField] Transform wallCheck;
     [SerializeField] LayerMask groundLayer;
+    private float jumpGraceTime = 0f;
 
     // rigidbody //
     private Rigidbody2D rb;
@@ -80,20 +81,25 @@ public class Player : MonoBehaviour
 
     public void Jump(float jumpInput)
     {
-        if (groundState == GroundState.Grounded && wallState == WallState.None)
+        if (wallState == WallState.None) 
         {
-            groundState = GroundState.Jumping;
-            rb.AddForce(new Vector2(0, jumpInput * jumpForce + jumpForce), ForceMode2D.Impulse);
-            ResetWallState();
-        }
-        if (groundState == GroundState.Jumping && wallState == WallState.None)
-        {
-            groundState = GroundState.DoubleJumping;
-            rb.AddForce(new Vector2(0, jumpInput * jumpForce + jumpForce / 1.5f), ForceMode2D.Impulse);
-            ResetWallState();
+            if (groundState == GroundState.Grounded)
+            {
+                jumpGraceTime = 0.5f; // grace time prevents the ground state from immediately resetting the groundstate to grounded
+                groundState = GroundState.Jumping;
+                rb.AddForce(new Vector2(0, jumpInput * jumpForce + jumpForce), ForceMode2D.Impulse);
+                ResetWallState();
+            }
+            else if (groundState == GroundState.Jumping)
+            {
+                groundState = GroundState.DoubleJumping;
+                rb.AddForce(new Vector2(0, jumpForce + jumpForce / 1.5f), ForceMode2D.Impulse);
+                ResetWallState();
+            }
         }
         else if (wallState == WallState.OnWall)
         {
+            groundState = GroundState.Jumping;
             float direction = transform.localScale.x > 0 ? -1 : 1;
             float force = Mathf.Clamp(jumpInput, 0.2f, 0.25f);
             rb.AddForce(new Vector2(10000 * force * direction, 12500 * force));
@@ -166,9 +172,15 @@ public class Player : MonoBehaviour
 
     private void SetGroundState()
     {
+        if (groundState != GroundState.Grounded && jumpGraceTime > 0)
+        {
+            jumpGraceTime -= Time.deltaTime;
+        }
+
         if (Physics2D.OverlapCircle(groundCheck.position, 0.01f, groundLayer))
         {
-            groundState = GroundState.Grounded;
+            if (jumpGraceTime <= 0)
+                groundState = GroundState.Grounded;
         }
     }
 

@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &162970354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 162970355}
+  m_Layer: 0
+  m_Name: Wall Check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &162970355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162970354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.067, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1227473944}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &257248475
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,7 +1416,7 @@ Transform:
   m_GameObject: {fileID: 990554975}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0059, y: -0.0784, z: 0}
+  m_LocalPosition: {x: 0.0059, y: -0.075, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1440,9 +1471,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveForce: 150
   moveSpeed: 20
-  jumpForce: 85
+  jumpForce: 50
   gravityForce: 125
   groundCheck: {fileID: 990554976}
+  wallCheck: {fileID: 162970355}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1541,6 +1573,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 990554976}
+  - {fileID: 162970355}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1227473946
@@ -1599,8 +1632,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.008736372, y: 0.0005537495}
-  m_Size: {x: 0.10976595, y: 0.1588925}
+  m_Offset: {x: 0.008736372, y: 0.0008388683}
+  m_Size: {x: 0.10976595, y: 0.15832226}
   m_Direction: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
