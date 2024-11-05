@@ -9,12 +9,17 @@ public class Player : MonoBehaviour
     [SerializeField] float moveForce = 150f;
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float jumpForce = 70f;
+    [SerializeField] float wallJumpForce = 150000f;
+    [SerializeField] float dashForce = 70f;
     [SerializeField] float gravityForce = 40f;
     [Header("Movement Fields")]
     [SerializeField] Transform groundCheck;
     [SerializeField] Transform wallCheck;
     [SerializeField] LayerMask groundLayer;
     private float jumpGraceTime = 0f;
+
+    // camera follow //
+    public Transform cameraTarget;
 
     // rigidbody //
     private Rigidbody2D rb;
@@ -57,7 +62,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        // later logic
+        movementState = MovementState.Idle;
     }
 
     public void Move(float moveInput)
@@ -111,7 +116,7 @@ public class Player : MonoBehaviour
             groundState = GroundState.Jumping;
             float direction = transform.localScale.x > 0 ? -1 : 1;
             float force = Mathf.Clamp(jumpInput, 0.2f, 0.25f);
-            rb.AddForce(new Vector2(10000 * force * direction, 12500 * force));
+            rb.AddForce(new Vector2(wallJumpForce * force * direction, wallJumpForce * force));
             FlipDirection(direction);
             ResetWallState();
         }
@@ -129,12 +134,12 @@ public class Player : MonoBehaviour
 
             if (horizontal + vertical != 0) 
             {
-                Vector2 dashDirection = new Vector2(4 * horizontal * jumpForce, 4 * vertical * jumpForce);
+                Vector2 dashDirection = new Vector2(4 * horizontal * dashForce, 4 * vertical * dashForce);
                 rb.AddForce(dashDirection, ForceMode2D.Impulse);
             }
             else
             {
-                Vector2 dashDirection = new Vector2(0, 4 * jumpForce);
+                Vector2 dashDirection = new Vector2(0, 4 * dashForce);
                 rb.AddForce(dashDirection, ForceMode2D.Impulse);
             }
             

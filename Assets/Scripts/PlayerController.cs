@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Player player;
-    private float moveInput = 0f;
+    public float moveInput = 0f;
     private bool jumpReleased = false;
     private float jumpInput = 0f;
     private bool dashInput = false;
