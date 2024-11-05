@@ -1,0 +1,10 @@
+{
+    "MoveLeft_1": "JoystickAxis1",
+    "MoveLeft_2": "JoystickButton6",
+    "MoveRight_1": "JoystickAxis2",
+    "MoveRight_2": "JoystickButton7",
+    "Jump_1": "JoystickButton0",
+    "Jump_2": "None",
+    "Dash_1": "JoystickButton1",
+    "Dash_2": "None"
+}

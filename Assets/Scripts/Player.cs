@@ -201,6 +201,10 @@ public class Player : MonoBehaviour
                 PlayAnimation("Jump");
             }
         }
+        else if (wallState == WallState.OnWall)
+        {
+            PlayAnimation("OnWall");
+        }
     }
 
     private void PlayAnimation(string _animName)

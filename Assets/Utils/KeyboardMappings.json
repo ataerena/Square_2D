@@ -1,0 +1,10 @@
+{
+    "MoveLeft_1": "A",
+    "MoveLeft_2": "LeftArrow",
+    "MoveRight_1": "D",
+    "MoveRight_2": "RightArrow",
+    "Jump_1": "Space",
+    "Jump_2": "UpArrow",
+    "Dash_1": "LeftShift",
+    "Dash_2": "RightShift"
+}
