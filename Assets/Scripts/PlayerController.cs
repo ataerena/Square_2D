@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
-            player.Dash(horizontal, vertical);
+            StartCoroutine(player.Dash(horizontal, vertical));
             dashInput = false;
         }
     }

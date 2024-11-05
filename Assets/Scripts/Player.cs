@@ -19,6 +19,9 @@ public class Player : MonoBehaviour
     // rigidbody //
     private Rigidbody2D rb;
 
+    // trail //
+    private TrailRenderer trail;
+
     // wall //
     private readonly float maxWallTime = 1.5f;
     private float currentWallTime = 0;
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        trail = GetComponent<TrailRenderer>();
         playerState = PlayerState.Idle;
     }
 
@@ -49,6 +53,11 @@ public class Player : MonoBehaviour
         HandleOnWall();
         ApplyGravity();
         ControlAnimation();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        // later logic
     }
 
     public void Move(float moveInput)
@@ -108,16 +117,31 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Dash(float horizontal, float vertical)
+    public IEnumerator Dash(float horizontal, float vertical)
     {
         if (currentDashTime <= 0)
         {
+            trail.enabled = true;
+
             movementState = MovementState.Dashing;
             currentDashTime = dashCooldown;
             rb.velocity = Vector2.zero;
-            Vector2 dashDirection = new Vector2(4 * horizontal * jumpForce, 4 * vertical * jumpForce);
-            rb.AddForce(dashDirection, ForceMode2D.Impulse);
+
+            if (horizontal + vertical != 0) 
+            {
+                Vector2 dashDirection = new Vector2(4 * horizontal * jumpForce, 4 * vertical * jumpForce);
+                rb.AddForce(dashDirection, ForceMode2D.Impulse);
+            }
+            else
+            {
+                Vector2 dashDirection = new Vector2(0, 4 * jumpForce);
+                rb.AddForce(dashDirection, ForceMode2D.Impulse);
+            }
+            
+
+            yield return new WaitForSeconds(.5f);
             movementState = MovementState.Idle;
+            trail.enabled = false;
         }
     }
 
@@ -150,7 +174,11 @@ public class Player : MonoBehaviour
 
     private void ControlAnimation()
     {
-        if (groundState == GroundState.Grounded)
+        if (movementState == MovementState.Dashing)
+        {
+            PlayAnimation("Dash");
+        }
+        else if (groundState == GroundState.Grounded)
         {
             if (movementState == MovementState.Running)
             {
@@ -159,6 +187,13 @@ public class Player : MonoBehaviour
             else if (movementState == MovementState.Idle)
             {
                 PlayAnimation("Idle");
+            }
+        }
+        else if (wallState == WallState.None)
+        {
+            if (groundState != GroundState.Grounded)
+            {
+                PlayAnimation("Jump");
             }
         }
     }
