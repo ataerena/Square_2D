@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
             if (player != null)
             {
                 PlayerController controller = player.GetComponent<PlayerController>();
-                if (Mathf.Abs(controller.moveInput) > 0)
+                if (Mathf.Abs(controller.moveInput.x) > 0)
                 {
                     Vector3 newPosition = Vector3.Lerp(transform.position, player.cameraTarget.position, 2f * Time.deltaTime);
                     transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);

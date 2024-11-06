@@ -1,25 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private Controls controls;
     private Player player;
-    public float moveInput = 0f;
+    public Vector2 moveInput = new Vector2();
     private bool jumpReleased = false;
     private float jumpInput = 0f;
     private bool dashInput = false;
     [SerializeField] float maxJumpInput = .25f;
-    void Start()
+
+    private void Awake()
+    {
+        controls = new Controls();
+    }
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
+    }
+
+    private void Start()
     {
         player = gameObject.GetComponent<Player>();
     }
 
     private void FixedUpdate()
     {
-        if (moveInput != 0)
+        if (moveInput.x != 0)
         {
-            player.Move(moveInput);
+            player.Move(moveInput.x);
         }
 
         if (jumpReleased)
@@ -31,9 +48,7 @@ public class PlayerController : MonoBehaviour
 
         if (dashInput)
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-            StartCoroutine(player.Dash(horizontal, vertical));
+            StartCoroutine(player.Dash(moveInput.x, moveInput.y));
             dashInput = false;
         }
     }
@@ -47,17 +62,17 @@ public class PlayerController : MonoBehaviour
 
     private void BufferMoveInput()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = controls.Player.Move.ReadValue<Vector2>();
     }
 
     private void BufferJumpInput()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (controls.Player.Jump.WasReleasedThisFrame())
         {
             jumpReleased = true;
         }
 
-        if (Input.GetKey(KeyCode.Space) && jumpInput <= maxJumpInput)
+        if (controls.Player.Jump.IsPressed() && jumpInput <= maxJumpInput)
         {
             jumpInput += Time.deltaTime;
         }
@@ -65,7 +80,7 @@ public class PlayerController : MonoBehaviour
 
     private void BufferDashInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (controls.Player.Dash.WasPressedThisFrame())
         {
             dashInput = true;
         }
