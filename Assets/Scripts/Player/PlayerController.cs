@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private bool jumpReleased = false;
     private float jumpInput = 0f;
     private bool dashInput = false;
+    private Player.PlayerState lastPlayerState;
     [SerializeField] float maxJumpInput = .25f;
 
     private void Awake()
@@ -55,9 +56,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        BufferMoveInput();
-        BufferJumpInput();
-        BufferDashInput();
+        HandlePressPause();
+        if (player.playerState != Player.PlayerState.Paused)
+        {
+            BufferMoveInput();
+            BufferJumpInput();
+            BufferDashInput();
+        }
     }
 
     private void BufferMoveInput()
@@ -83,6 +88,22 @@ public class PlayerController : MonoBehaviour
         if (controls.Player.Dash.WasPressedThisFrame())
         {
             dashInput = true;
+        }
+    }
+
+    private void HandlePressPause()
+    {
+        if (controls.UI.Pause.WasPressedThisFrame())
+        {
+            if (player.playerState != Player.PlayerState.Paused)
+            {
+                lastPlayerState = player.playerState;
+                player.playerState = Player.PlayerState.Paused;
+            }
+            else
+            {
+                player.playerState = lastPlayerState;
+            }
         }
     }
 }

@@ -21,6 +21,9 @@ public class Player : MonoBehaviour
     // camera follow //
     public Transform cameraTarget;
 
+    // UI //
+    [SerializeField] GameObject UiCanvas;
+
     // rigidbody //
     private Rigidbody2D rb;
 
@@ -32,11 +35,11 @@ public class Player : MonoBehaviour
     private float currentWallTime = 0;
 
     // dash //
-    private float dashCooldown = 1f;
+    private readonly float dashCooldown = 1f;
     private float currentDashTime = 0;
 
     // states //
-    private PlayerState playerState;
+    public PlayerState playerState;
     private GroundState groundState;
     private WallState wallState;
     private MovementState movementState;
@@ -49,7 +52,14 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-
+        if (playerState == PlayerState.Paused)
+        {
+            SetUiActive(true);
+        }
+        else
+        {
+            SetUiActive(false);
+        }
     }
 
     private void FixedUpdate()
@@ -277,11 +287,12 @@ public class Player : MonoBehaviour
         SetMovementState();
     }
 
-    private enum PlayerState
+    public enum PlayerState
     {
         Idle,
         Empowered,
-        Dead
+        Dead,
+        Paused
     }
 
     private enum GroundState
@@ -305,4 +316,16 @@ public class Player : MonoBehaviour
         Sprinting,
         Dashing
     }
+
+    #region UI Manager
+
+    private void SetUiActive(bool active)
+    {
+        if (UiCanvas.activeSelf != active)
+        {
+            UiCanvas.SetActive(active);
+        }
+    }
+
+    #endregion UI Manager
 }
