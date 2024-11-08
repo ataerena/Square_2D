@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private bool jumpReleased = false;
     private float jumpInput = 0f;
     private bool dashInput = false;
-    private Player.PlayerState lastPlayerState;
+    public Player.PlayerState lastPlayerState;
     [SerializeField] float maxJumpInput = .25f;
 
     private void Awake()

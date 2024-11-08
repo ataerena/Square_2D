@@ -323,6 +323,8 @@ public class Player : MonoBehaviour
     {
         if (UiCanvas.activeSelf != active)
         {
+            Cursor.lockState = active ? CursorLockMode.Confined : CursorLockMode.Locked;
+            Cursor.visible = active;
             UiCanvas.SetActive(active);
         }
     }
