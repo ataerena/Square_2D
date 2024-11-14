@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     private PlayerInput controls;
     private InputActionMap playerActionMap;
-    private InputActionMap uiActionMap;
+    public InputActionMap uiActionMap;
     private Player player;
     public Vector2 moveInput = new Vector2();
     private bool jumpReleased = false;

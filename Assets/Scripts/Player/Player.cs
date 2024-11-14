@@ -58,6 +58,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            UiCanvas.GetComponent<UIManager>().ResetActiveButton();
             SetUiActive(false);
         }
     }
