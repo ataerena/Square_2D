@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Controls controls;
+    private PlayerInput controls;
+    private InputActionMap playerActionMap;
+    private InputActionMap uiActionMap;
     private Player player;
     public Vector2 moveInput = new Vector2();
     private bool jumpReleased = false;
@@ -15,22 +17,28 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        controls = new Controls();
+        controls = gameObject.GetComponent<PlayerInput>();
+        playerActionMap = controls.actions.FindActionMap("Player");
+        uiActionMap = controls.actions.FindActionMap("UI");
     }
 
     private void OnEnable()
     {
-        controls.Enable();
+        playerActionMap.Enable();
+        uiActionMap.Enable();
     }
 
     private void OnDisable()
     {
-        controls.Disable();
+        playerActionMap.Disable();
+        uiActionMap.Disable();
     }
 
     private void Start()
     {
         player = gameObject.GetComponent<Player>();
+
+        LoadPlayerPreferences();
     }
 
     private void FixedUpdate()
@@ -67,17 +75,19 @@ public class PlayerController : MonoBehaviour
 
     private void BufferMoveInput()
     {
-        moveInput = controls.Player.Move.ReadValue<Vector2>();
+        InputAction action = playerActionMap["Move"];
+        moveInput = action.ReadValue<Vector2>();
     }
 
     private void BufferJumpInput()
     {
-        if (controls.Player.Jump.WasReleasedThisFrame())
+        InputAction action = playerActionMap["Jump"];
+        if (action.WasReleasedThisFrame())
         {
             jumpReleased = true;
         }
 
-        if (controls.Player.Jump.IsPressed() && jumpInput <= maxJumpInput)
+        if (action.IsPressed() && jumpInput <= maxJumpInput)
         {
             jumpInput += Time.deltaTime;
         }
@@ -85,7 +95,8 @@ public class PlayerController : MonoBehaviour
 
     private void BufferDashInput()
     {
-        if (controls.Player.Dash.WasPressedThisFrame())
+        InputAction action = playerActionMap["Dash"];
+        if (action.WasPressedThisFrame())
         {
             dashInput = true;
         }
@@ -93,7 +104,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandlePressPause()
     {
-        if (controls.UI.Pause.WasPressedThisFrame())
+        InputAction action = uiActionMap["Pause"];
+        if (action.WasPressedThisFrame())
         {
             if (player.playerState != Player.PlayerState.Paused)
             {
@@ -105,5 +117,28 @@ public class PlayerController : MonoBehaviour
                 player.playerState = lastPlayerState;
             }
         }
+    }
+
+    private void LoadPlayerPreferences()
+    {
+        foreach (var action in playerActionMap.bindings)
+        {
+            if (action.path.ToLower().Contains("gamepad"))
+            {
+                var savedBindings = PlayerPrefs.GetString($"{action.name}_gamepad");
+                if (!string.IsNullOrEmpty(savedBindings))
+                {
+                    playerActionMap[action.name].actionMap.LoadBindingOverridesFromJson(savedBindings);
+                }
+            }
+            else
+            {
+                var savedBindings = PlayerPrefs.GetString($"{action.name}_keyboard");
+                if (!string.IsNullOrEmpty(savedBindings))
+                {
+                    playerActionMap[action.name].actionMap.LoadBindingOverridesFromJson(savedBindings);
+                }
+            }
+        }   
     }
 }

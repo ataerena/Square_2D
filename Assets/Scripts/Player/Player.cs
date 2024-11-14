@@ -149,8 +149,16 @@ public class Player : MonoBehaviour
             }
             else
             {
-                Vector2 dashDirection = new Vector2(0, 4 * dashForce);
-                rb.AddForce(dashDirection, ForceMode2D.Impulse);
+                if (horizontal != 0 || vertical != 0)
+                {
+                    Vector2 dashDirection = new Vector2(4 * horizontal * dashForce, 4 * vertical * dashForce);
+                    rb.AddForce(dashDirection, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    Vector2 dashDirection = new Vector2(0, 4 * dashForce);
+                    rb.AddForce(dashDirection, ForceMode2D.Impulse);
+                }
             }
             
 
@@ -326,6 +334,12 @@ public class Player : MonoBehaviour
             Cursor.lockState = active ? CursorLockMode.Confined : CursorLockMode.Locked;
             Cursor.visible = active;
             UiCanvas.SetActive(active);
+        }
+
+        if (active == false)
+        {
+            UiCanvas.GetComponent<UIManager>().mainMenu.SetActive(true);
+            UiCanvas.GetComponent<UIManager>().settingsMenu.SetActive(false);
         }
     }
 
