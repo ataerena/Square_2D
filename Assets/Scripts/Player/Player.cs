@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // checkpoints //
+    [SerializeField] Transform startingPoint;
+    public Transform currentCheckpoint = null;
+    private int deathCount = 0;
+
     [Header("Movement Numbers")]
     [SerializeField] float moveForce = 150f;
     [SerializeField] float moveSpeed = 5f;
@@ -43,11 +48,17 @@ public class Player : MonoBehaviour
     private GroundState groundState;
     private WallState wallState;
     private MovementState movementState;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         trail = GetComponent<TrailRenderer>();
         playerState = PlayerState.Idle;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        SnapToStart();
     }
 
     private void Update()
@@ -194,6 +205,27 @@ public class Player : MonoBehaviour
         {
             rb.AddForce(new Vector2(0, gravityForce / 7.5f), ForceMode2D.Force);
         }
+    }
+
+    public void Die() // method is called on the trigger of stuff that kills
+    {
+        if (playerState != PlayerState.Dead)
+        {
+            if (currentCheckpoint != null) RevertToCheckpoint();
+            else SnapToStart();
+
+            deathCount++;
+        }
+    }
+
+    private void RevertToCheckpoint()
+    {
+        gameObject.transform.position = currentCheckpoint.position;
+    }
+
+    private void SnapToStart()
+    {
+        gameObject.transform.position = startingPoint.position;
     }
 
     private void ControlAnimation()
